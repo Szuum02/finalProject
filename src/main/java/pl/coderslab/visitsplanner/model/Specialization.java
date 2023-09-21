@@ -10,7 +10,7 @@ public class Specialization {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
-    private SpecializationsNames name;
+    private String name;
 
     public Integer getId() {
         return id;
@@ -20,11 +20,11 @@ public class Specialization {
         this.id = id;
     }
 
-    public SpecializationsNames getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(SpecializationsNames name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

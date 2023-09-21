@@ -73,4 +73,9 @@ public class Hospital {
     public void setPostCode(String postCode) {
         this.postCode = postCode;
     }
+
+    public String getFullAddress() {
+        String number = flatNumber == null ? String.valueOf(streetNumber) : street + "/" + flatNumber;
+        return String.format("ul. %s %s, %s %s", street, number, postCode, city);
+    }
 }

@@ -3,6 +3,7 @@ package pl.coderslab.visitsplanner.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "visits")
@@ -12,6 +13,8 @@ public class Visit {
     private Long id;
     @NotNull
     private LocalDateTime dateTime;
+    @NotNull
+    private String specialisation;
     private String comments;
 
     @OneToOne
@@ -72,5 +75,18 @@ public class Visit {
 
     public void setHospital(Hospital hospital) {
         this.hospital = hospital;
+    }
+
+    public String getSpecialisation() {
+        return specialisation;
+    }
+
+    public void setSpecialisation(String specialisation) {
+        this.specialisation = specialisation;
+    }
+
+    public String getDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        return formatter.format(dateTime);
     }
 }
