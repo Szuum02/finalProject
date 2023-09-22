@@ -12,10 +12,14 @@ public class Hospital {
     @NotNull
     private String name;
 
+    @NotNull
     private String street;
+    @NotNull
     private Integer streetNumber;
     private Integer flatNumber;
+    @NotNull
     private String city;
+    @NotNull
     private String postCode;
 
     public Long getId() {
