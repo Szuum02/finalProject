@@ -2,6 +2,7 @@ package pl.coderslab.visitsplanner.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,15 +19,15 @@ public class Doctor {
 
     @ManyToMany
     @NotNull
-    private List<Specialization> specializations;
+    private List<Specialization> specializations = new ArrayList<>();
 
     @ManyToMany
     @NotNull
-    private List<Patient> patients;
+    private List<Patient> patients = new ArrayList<>();
 
     @ManyToMany
     @NotNull
-    private List<Hospital> hospitals;
+    private List<Hospital> hospitals = new ArrayList<>();
 
     public Long getId() {
         return id;

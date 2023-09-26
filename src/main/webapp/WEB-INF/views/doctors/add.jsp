@@ -12,12 +12,19 @@
     <title>Nowy doktor</title>
 </head>
 <body>
-<form:form method="post" modelAttribute="doctor">
-    Imię: <form:input path="firstName"/><br/>
-    Nazwisko: <form:input path="lastName"/><br/>
-    Specializacje: <form:select path="specializations" items="${specialisations}" itemLabel="name" itemValue="id"/><br/>
-    Szpitale: <form:select path="hospitals" items="${hospitals}" itemLabel="name" itemValue="id"/><br/>
-    <button type="submit">Dodaj</button>
+<form:form id="form" method="post" modelAttribute="doctor">
+    Imię: <form:input id="firstName" path="firstName"/><br/>
+    Nazwisko: <form:input id="lastName" path="lastName"/><br/>
+    <label for="specialisation" id="specialisationLabel">Specjalizacje: </label>
+    <form:select id="specialisation" path="specializations" items="${specialisations}" itemLabel="name" itemValue="id"/>
+    <button id="newSpecialisation">Nowa specjalizacja</button><br/>
+    <label for="hospital" id="hospitalLabel">Szpitale: </label>
+    <form:select id="hospital" path="hospitals" items="${hospitals}" itemLabel="name" itemValue="id"/>
+    <button id="newHospital">Nowy szpital</button><br/>
+    <button id="submitButton" type="submit">Dodaj</button>
 </form:form>
 </body>
+<script type="text/javascript" src="/js/doctors/addForm.js"></script>
+<script type="text/javascript" src="/js/doctors/newHospital.js"></script>
+<script type="text/javascript" src="/js/doctors/newSpecialisation.js"></script>
 </html>

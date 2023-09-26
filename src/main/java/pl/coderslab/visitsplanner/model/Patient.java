@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "patients")
@@ -30,6 +31,9 @@ public class Patient {
     private Integer flatNumber;
     private String city;
     private String postCode;
+
+    @ManyToMany(mappedBy = "patients")
+    private List<Doctor> doctors;
 
     public String getPesel() {
         return pesel;
@@ -117,5 +121,17 @@ public class Patient {
 
     public void setPostCode(String postCode) {
         this.postCode = postCode;
+    }
+
+    public List<Doctor> getDoctors() {
+        return doctors;
+    }
+
+    public void setDoctors(List<Doctor> doctors) {
+        this.doctors = doctors;
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
 }

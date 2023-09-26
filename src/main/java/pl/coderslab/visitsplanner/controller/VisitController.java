@@ -2,18 +2,23 @@ package pl.coderslab.visitsplanner.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.coderslab.visitsplanner.model.Visit;
+import pl.coderslab.visitsplanner.repository.PatientRepository;
 import pl.coderslab.visitsplanner.repository.VisitRepository;
 
 @Controller
 @RequestMapping("/visit")
 public class VisitController {
     private final VisitRepository visitRepository;
+    private final PatientRepository patientRepository;
 
-    public VisitController(VisitRepository visitRepository) {
+    public VisitController(VisitRepository visitRepository, PatientRepository patientRepository) {
         this.visitRepository = visitRepository;
+        this.patientRepository = patientRepository;
     }
 
     @RequestMapping("/showAll")
@@ -30,5 +35,12 @@ public class VisitController {
         }
         model.addAttribute("visit", visit);
         return "visits/visitsDetails";
+    }
+
+    @GetMapping("/add")
+    public String addVisitForm(Model model) {
+        model.addAttribute("visit", new Visit());
+        model.addAttribute("patients", patientRepository.findAll());
+        return "visits/add";
     }
 }

@@ -1,5 +1,7 @@
 package pl.coderslab.visitsplanner.model;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -10,6 +12,7 @@ public class Specialization {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
+    @Column(unique = true)
     private String name;
 
     public Integer getId() {

@@ -15,7 +15,10 @@
 <ul>
   <c:forEach items="${pateints}" var="pateint">
     <li>
-      ${pateint.firstName} ${pateint.lastName}
+      ${pateint.firstName} ${pateint.lastName}<br/>
+      <c:forEach items="${pateint.doctors}" var="doctor">
+          ${doctor.fullName}<br/>
+      </c:forEach>
     </li>
   </c:forEach>
 </ul>
