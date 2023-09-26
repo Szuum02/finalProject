@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.visitsplanner.model.*;
 import pl.coderslab.visitsplanner.repository.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Controller
@@ -99,6 +101,17 @@ public class VisitController {
         return "visits/addDateAndComments";
     }
 
+    @PostMapping("/add/createVisit")
+    public RedirectView createVisit(Visit visit, @RequestParam String date, @RequestParam String time) {
+        if (time.split(":")[0].length() == 1) {
+            time = "0" + time;
+        }
+        LocalDateTime dateTime = LocalDateTime.parse(date + "T" + time);
+        visit.setDateTime(dateTime);
+        visitRepository.save(visit);
+        return new RedirectView("/visit/showAll");
+    }
+
     private Patient createPatient(String jsonPatient) {
         Patient patient = null;
         try {
@@ -143,7 +156,11 @@ public class VisitController {
         Hospital hospital = null;
         try {
             hospital = mapper.readValue(jsonHospital, Hospital.class);
-            hospitalRepository.save(hospital);
+            if (hospitalRepository.findHospitalByNameAndCity(hospital.getName(), hospital.getCity()) == null) {
+                hospitalRepository.save(hospital);
+            } else {
+                hospital = hospitalRepository.findHospitalByNameAndCity(hospital.getName(), hospital.getCity());
+            }
         } catch (JsonProcessingException e) {
             //TODO
             System.out.println(e.getMessage());
