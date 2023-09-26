@@ -26,7 +26,6 @@ public class Doctor {
     private List<Patient> patients = new ArrayList<>();
 
     @ManyToMany
-    @NotNull
     private List<Hospital> hospitals = new ArrayList<>();
 
     public Long getId() {

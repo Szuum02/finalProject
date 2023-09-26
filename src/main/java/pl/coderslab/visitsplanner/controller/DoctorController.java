@@ -44,13 +44,14 @@ public class DoctorController {
                             @RequestParam(required = false) String jsonSpecialisation,
                             @RequestParam(required = false) String jsonHospital) {
         doctor.setPatients(new ArrayList<>());
-        doctor.setHospitals(new ArrayList<>());
 
         if (jsonSpecialisation != null) {
+            doctor.setSpecializations(new ArrayList<>());
             addNewSpecialisation(doctor, jsonSpecialisation);
         }
 
         if (jsonHospital != null) {
+            doctor.setHospitals(new ArrayList<>());
             addNewHospital(doctor, jsonHospital);
         }
 

@@ -24,7 +24,7 @@
     <button id="submitButton" type="submit">Dodaj</button>
 </form:form>
 </body>
-<script type="text/javascript" src="/js/doctors/addForm.js"></script>
-<script type="text/javascript" src="/js/doctors/newHospital.js"></script>
-<script type="text/javascript" src="/js/doctors/newSpecialisation.js"></script>
+<script type="text/javascript" src="/js/addForms/addForm.js"></script>
+<script type="text/javascript" src="/js/addForms/newHospital.js"></script>
+<script type="text/javascript" src="/js/addForms/newSpecialisation.js"></script>
 </html>

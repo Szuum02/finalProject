@@ -43,5 +43,4 @@ hospitalButton.addEventListener("click", function (event) {
         hospital.value = JSON.stringify(hospitalObject);
         form.submit();
     })
-    // setAttribute(hos)
 })

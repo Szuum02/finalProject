@@ -9,14 +9,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Dodaj wizytę</title>
+    <title>Nowa wizyta</title>
     <link rel="icon" href="data:;base64," type="image/x-icon">
 </head>
 <body>
 <form:form id="form" method="post" modelAttribute="visit">
-    Pacjent: <form:select path="patient" items="${patients}" itemLabel="fullName" itemValue="id"/><br/>
-    Lekarz: <form:select id="doctorLabel" path="doctor" items="${patient.doctors}" itemLabel="fullName" itemValue="id"/> <button id="newDoctor">Nowy lekarz</button><br/>
+    <label id="patientLabel" for="patients">Pacjent</label>
+    <form:select id="patients" path="patient" items="${patients}" itemLabel="fullName" itemValue="id"/> <button id="patientButton">Nowy pacjent</button><br/>
+    <button id="submitButton" type="submit">Dalej</button>
 </form:form>
 </body>
-<script type="text/javascript" src="/js/visits/addForm.js"></script>
+<script type="text/javascript" src="/js/addForms/addForm.js"></script>
+<script type="text/javascript" src="/js/addForms/newPatient.js"></script>
 </html>
