@@ -1,9 +1,12 @@
 package pl.coderslab.visitsplanner.model;
 
 import org.hibernate.validator.constraints.UniqueElements;
+import org.hibernate.validator.constraints.pl.PESEL;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Entity
@@ -15,21 +18,33 @@ public class Patient {
 
     @NotNull
     @Column(unique = true)
+    @PESEL(message = "Niepoprawny pesel")
     private String pesel;
     @NotNull
+    @NotBlank
+    @Pattern(regexp = "(\\p{L}*[- ])*\\p{L}+", message = "Błędne imię")
     private String firstName;
     @NotNull
+    @NotBlank
+    @Pattern(regexp = "(\\p{L}*[- ])*\\p{L}+", message = "Błędne nazwisko")
     private String lastName;
     @NotNull
     @Column(unique = true)
+    @NotBlank
+    @Pattern(regexp = "[_a-zA-Z0-9-]+(\\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}){1}", message = "Niepoprawny mail")
     private String mail;
     @NotNull
+    @Pattern(regexp = "\\d{9}", message = "Nr telefonu musi się składać z 9 cyfr")
     private String telephone;
 
     private String street;
+
     private Integer streetNumber;
+
     private Integer flatNumber;
+    @Pattern(regexp = "(\\p{L}+[- ])*\\p{L}+", message = "Niepoprawna nazwa miasta")
     private String city;
+    @Pattern(regexp = "([0-9][0-9]-[0-9][0-9][0-9])?", message = "Kod pocztowy musi być w formaci xx-xxx")
     private String postCode;
 
     @ManyToMany(mappedBy = "patients")

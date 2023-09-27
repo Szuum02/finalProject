@@ -2,12 +2,15 @@ package pl.coderslab.visitsplanner.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.coderslab.visitsplanner.model.Patient;
 import pl.coderslab.visitsplanner.repository.PatientRepository;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/patient")
@@ -25,7 +28,10 @@ public class PatientController {
     }
 
     @PostMapping("/addPatient")
-    public String addPatient(Patient patient) {
+    public String addPatient(@Valid Patient patient, BindingResult result) {
+        if (result.hasErrors()) {
+            return "patients/addPatient";
+        }
         patientRepository.save(patient);
         return "redirect:/patient/showAll";
     }
