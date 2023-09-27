@@ -1,11 +1,11 @@
 package pl.coderslab.visitsplanner.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.visitsplanner.model.Doctor;
 import pl.coderslab.visitsplanner.model.Hospital;
 import pl.coderslab.visitsplanner.model.Specialization;
@@ -13,7 +13,7 @@ import pl.coderslab.visitsplanner.repository.DoctorRepository;
 import pl.coderslab.visitsplanner.repository.HospitalRepository;
 import pl.coderslab.visitsplanner.repository.SpecialisationRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.print.Doc;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.ArrayList;
@@ -49,10 +49,8 @@ public class DoctorController {
     public String addDoctor(Doctor doctor,
                             @RequestParam(required = false) String jsonSpecialisation,
                             @RequestParam(required = false) String jsonHospital) {
-        doctor.setPatients(new ArrayList<>());
 
         if (jsonSpecialisation != null) {
-            doctor.setSpecializations(new ArrayList<>());
             Specialization specialization = addNewSpecialisation(jsonSpecialisation);
             if (specialization == null) {
                 return "error";
@@ -61,7 +59,6 @@ public class DoctorController {
         }
 
         if (jsonHospital != null) {
-            doctor.setHospitals(new ArrayList<>());
             Hospital hospital = addNewHospital(jsonHospital);
             if (hospital == null) {
                 return "error";
@@ -74,11 +71,11 @@ public class DoctorController {
             return "error";
         }
         doctorRepository.save(doctor);
-        return "redirect:/visit/showAll";
+        return "redirect:/";
     }
 
     private Specialization addNewSpecialisation(String jsonSpecialisation) {
-        Specialization specialization = null;
+        Specialization specialization;
         try {
             specialization = mapper.readValue(jsonSpecialisation, Specialization.class);
         } catch (JsonProcessingException e) {
@@ -93,7 +90,7 @@ public class DoctorController {
     }
 
     private Hospital addNewHospital(String jsonHospital) {
-        Hospital hospital = null;
+        Hospital hospital;
         try {
             hospital = mapper.readValue(jsonHospital, Hospital.class);
         } catch (JsonProcessingException e) {
@@ -105,5 +102,25 @@ public class DoctorController {
         }
         hospitalRepository.save(hospital);
         return hospital;
+    }
+
+    @RequestMapping("/showAll")
+    public String showAll(Model model) {
+        model.addAttribute("doctors", doctorRepository.findAll());
+        return "doctors/showAll";
+    }
+
+    @RequestMapping("/confirmDelete")
+    public String confirmDelete(@RequestParam Long id, Model model) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+        model.addAttribute("doctor", doctor);
+        return "doctors/confirmDelete";
+    }
+
+    @RequestMapping("/delete")
+    public RedirectView delete(@RequestParam Long id) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+        doctorRepository.delete(doctor);
+        return new RedirectView("/");
     }
 }

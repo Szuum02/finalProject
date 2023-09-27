@@ -16,11 +16,14 @@
 <ul>
   <c:forEach items="${visits}" var="visit">
     <li>
+        Pacjent: ${visit.patient.fullName}<br/>
         ${visit.date} - ${visit.specialisation}<br/>
         dr ${visit.doctor.fullName}<br/>
-        ${visit.hospital.fullAddress}
+        ${visit.hospital.fullAddress}<br/>
+        <button onclick="javascript:location.href='details?id=${visit.id}'">Pokaż szczegóły</button>
     </li>
   </c:forEach>
 </ul>
+<button onclick="javascript:location.href='/'">Powrót</button>
 </body>
 </html>

@@ -16,6 +16,8 @@
   ${visit.hospital.name}<br/>
   ${visit.hospital.fullAddress}<br/>
   Uwagi:<br/>
-  ${visit.comments}
+  ${visit.comments}<br/>
+<button onclick="javascript:location.href='/visit/confirmDelete?id=${visit.id}'">Usuń</button>
+<button onclick="javascript:location.href='/'">Strona główna</button>
 </body>
 </html>

@@ -32,6 +32,6 @@ public class HospitalController {
             return "hospitals/add";
         }
         hospitalRepository.save(hospital);
-        return "redirect:/visit/showAll";
+        return "redirect:/";
     }
 }

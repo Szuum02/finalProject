@@ -13,5 +13,6 @@
 <body>
 <h1>Wystąpił błąd</h1>
 <p>Prosimy spróbować ponownie. Pamiętaj że niektóre dane mogły już zostać zapisane.</p>
+<button onclick="javascript:location.href='/'">Strona główna</button>
 </body>
 </html>

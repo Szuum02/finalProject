@@ -16,11 +16,15 @@
   <c:forEach items="${pateints}" var="pateint">
     <li>
       ${pateint.firstName} ${pateint.lastName}<br/>
-      <c:forEach items="${pateint.doctors}" var="doctor">
-          ${doctor.fullName}<br/>
-      </c:forEach>
+          Lekarze:
+          <ul>
+              <c:forEach items="${pateint.doctors}" var="doctor">
+                  <li>${doctor.fullName}</li>
+              </c:forEach>
+          </ul>
     </li>
   </c:forEach>
 </ul>
+<button onclick="javascript:location.href='/'">Powrót</button>
 </body>
 </html>

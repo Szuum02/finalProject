@@ -12,7 +12,7 @@
     <title>Nowy doktor</title>
 </head>
 <body>
-<form:form id="form" method="post" modelAttribute="doctor">
+<form:form action="/doctor/add" id="form" method="post" modelAttribute="doctor">
     <form:errors path="firstName" cssClass="error"/>
     Imię: <form:input id="firstName" path="firstName"/><br/>
 

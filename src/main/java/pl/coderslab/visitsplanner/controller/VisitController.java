@@ -41,7 +41,7 @@ public class VisitController {
 
     @RequestMapping("/showAll")
     public String showAllVisits(Model model) {
-        model.addAttribute("visits", visitRepository.findAll());
+        model.addAttribute("visits", visitRepository.findAllOrderByDate());
         return "visits/showAll";
     }
 
@@ -98,6 +98,9 @@ public class VisitController {
                 return "error";
             }
             visit.setDoctor(doctor);
+        } else {
+            visit.getDoctor().getPatients().add(visit.getPatient());
+            doctorRepository.save(visit.getDoctor());
         }
         model.addAttribute("visit", visit);
         model.addAttribute("hospitals", doctorRepository.findAllHospitalsByDoctorId(visit.getDoctor().getId()));
@@ -134,18 +137,21 @@ public class VisitController {
             return new RedirectView("/error");
         }
         visitRepository.save(visit);
-        return new RedirectView("/visit/showAll");
+        return new RedirectView("/");
     }
 
     private Patient createPatient(String jsonPatient) {
-        Patient patient = null;
+        Patient patient;
         try {
             patient = mapper.readValue(jsonPatient, Patient.class);
-            patientRepository.save(patient);
         } catch (JsonProcessingException e) {
-            //TODO
-            System.out.println(e);
+            return null;
         }
+        Set<ConstraintViolation<Patient>> violations = validator.validate(patient);
+        if (!violations.isEmpty()) {
+            return null;
+        }
+        patientRepository.save(patient);
         return patient;
     }
 
@@ -168,9 +174,7 @@ public class VisitController {
         Doctor doctor;
         try {
             doctor = mapper.readValue(jsonDoctor, Doctor.class);
-            doctor.setPatients(new ArrayList<>());
             doctor.getPatients().add(patient);
-            doctor.setSpecializations(new ArrayList<>());
             doctor.getSpecializations().add(specialisationRepository.findByName(specName));
         } catch (JsonProcessingException e) {
             return null;
@@ -201,5 +205,19 @@ public class VisitController {
         }
         hospitalRepository.save(hospital);
         return hospital;
+    }
+
+    @GetMapping("/confirmDelete")
+    public String confirmDelete(@RequestParam Long id, Model model) {
+        Visit visit = visitRepository.findById(id).orElse(null);
+        model.addAttribute("visit", visit);
+        return "visits/confirmDelete";
+    }
+
+    @GetMapping("/delete")
+    public RedirectView deleteVisit(@RequestParam Long id) {
+        Visit visit = visitRepository.findById(id).orElse(null);
+        visitRepository.delete(visit);
+        return new RedirectView("/");
     }
 }

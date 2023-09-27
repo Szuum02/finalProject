@@ -21,19 +21,19 @@ public class PatientController {
         this.patientRepository = patientRepository;
     }
 
-    @GetMapping("/addPatient")
+    @GetMapping("/add")
     public String addPatientForm(Model model) {
         model.addAttribute("patient", new Patient());
         return "patients/addPatient";
     }
 
-    @PostMapping("/addPatient")
+    @PostMapping("/add")
     public String addPatient(@Valid Patient patient, BindingResult result) {
         if (result.hasErrors()) {
             return "patients/addPatient";
         }
         patientRepository.save(patient);
-        return "redirect:/patient/showAll";
+        return "redirect:/";
     }
 
     @RequestMapping("/showAll")

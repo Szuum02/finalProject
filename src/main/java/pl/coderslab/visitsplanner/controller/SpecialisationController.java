@@ -33,6 +33,6 @@ public class SpecialisationController {
             return "specialisations/add";
         }
         specialisationRepository.save(specialisation);
-        return "redirect:/visit/showAll";
+        return "redirect:/";
     }
 }
