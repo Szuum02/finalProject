@@ -14,7 +14,10 @@ import pl.coderslab.visitsplanner.repository.HospitalRepository;
 import pl.coderslab.visitsplanner.repository.SpecialisationRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/doctor")
@@ -23,11 +26,14 @@ public class DoctorController {
     private DoctorRepository doctorRepository;
     private SpecialisationRepository specialisationRepository;
     private HospitalRepository hospitalRepository;
+    private final Validator validator;
 
-    public DoctorController(DoctorRepository doctorRepository, SpecialisationRepository specialisationRepository, HospitalRepository hospitalRepository) {
+    public DoctorController(DoctorRepository doctorRepository, SpecialisationRepository specialisationRepository,
+                            HospitalRepository hospitalRepository, Validator validator) {
         this.doctorRepository = doctorRepository;
         this.specialisationRepository = specialisationRepository;
         this.hospitalRepository = hospitalRepository;
+        this.validator = validator;
         this.mapper = new ObjectMapper();
     }
 
@@ -47,39 +53,57 @@ public class DoctorController {
 
         if (jsonSpecialisation != null) {
             doctor.setSpecializations(new ArrayList<>());
-            addNewSpecialisation(doctor, jsonSpecialisation);
+            Specialization specialization = addNewSpecialisation(jsonSpecialisation);
+            if (specialization == null) {
+                return "error";
+            }
+            doctor.getSpecializations().add(specialization);
         }
 
         if (jsonHospital != null) {
             doctor.setHospitals(new ArrayList<>());
-            addNewHospital(doctor, jsonHospital);
+            Hospital hospital = addNewHospital(jsonHospital);
+            if (hospital == null) {
+                return "error";
+            }
+            doctor.getHospitals().add(hospital);
         }
 
+        Set<ConstraintViolation<Doctor>> violation = validator.validate(doctor);
+        if (!violation.isEmpty()) {
+            return "error";
+        }
         doctorRepository.save(doctor);
         return "redirect:/visit/showAll";
     }
 
-    private void addNewSpecialisation(Doctor doctor, String jsonSpecialisation) {
+    private Specialization addNewSpecialisation(String jsonSpecialisation) {
         Specialization specialization = null;
         try {
             specialization = mapper.readValue(jsonSpecialisation, Specialization.class);
-            specialisationRepository.save(specialization);
         } catch (JsonProcessingException e) {
-            // TODO: obsługa błędu
-            System.out.println(e.getMessage());
+            return null;
         }
-        doctor.getSpecializations().add(specialization);
+        Set<ConstraintViolation<Specialization>> violations = validator.validate(specialization);
+        if (!violations.isEmpty()) {
+            return null;
+        }
+        specialisationRepository.save(specialization);
+        return specialization;
     }
 
-    private void addNewHospital(Doctor doctor, String jsonHospital) {
+    private Hospital addNewHospital(String jsonHospital) {
         Hospital hospital = null;
         try {
             hospital = mapper.readValue(jsonHospital, Hospital.class);
-            hospitalRepository.save(hospital);
         } catch (JsonProcessingException e) {
-            // TODO: obsługa błędu
-            System.out.println("ERROR");
+            return null;
         }
-        doctor.getHospitals().add(hospital);
+        Set<ConstraintViolation<Hospital>> violations = validator.validate(hospital);
+        if (!violations.isEmpty()) {
+            return null;
+        }
+        hospitalRepository.save(hospital);
+        return hospital;
     }
 }
