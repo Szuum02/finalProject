@@ -13,6 +13,7 @@
 </head>
 <body>
 <form:form method="post" modelAttribute="specialisation">
+    <form:errors path="name" cssClass="error"/>
     Nazwa: <form:input path="name"/><br/>
     <button type="submit">Dodaj</button>
 </form:form>

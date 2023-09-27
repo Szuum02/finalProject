@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Entity
@@ -14,6 +15,7 @@ public class Specialization {
     private Integer id;
     @NotNull
     @Column(unique = true)
+    @Pattern(regexp = "[A-Z][a-z]*", message = "Specjalizacja zawiera tylko litery")
     private String name;
 
     public Integer getId() {
