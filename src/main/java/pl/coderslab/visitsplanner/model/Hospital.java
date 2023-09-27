@@ -1,7 +1,11 @@
 package pl.coderslab.visitsplanner.model;
 
+import org.springframework.format.annotation.NumberFormat;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "hospitals")
@@ -10,16 +14,22 @@ public class Hospital {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
+    @NotBlank(message = "Nazwa szpitala nie może być pusta")
     private String name;
 
     @NotNull
+    @NotBlank(message = "Nazwa ulicy nie może być pusta")
     private String street;
-    @NotNull
+    @NotNull(message = "Błędna wartość numeru domu")
     private Integer streetNumber;
     private Integer flatNumber;
     @NotNull
+    @NotBlank
+    @Pattern(regexp = "(\\p{L}+[- ])*\\p{L}+", message = "Błędna nazwa miasta")
     private String city;
     @NotNull
+    @NotBlank
+    @Pattern(regexp = "[0-9][0-9]-[0-9][0-9][0-9]", message = "Kod pocztowy ma być w formacie xx-xxx")
     private String postCode;
 
     public Long getId() {
