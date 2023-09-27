@@ -1,7 +1,9 @@
 package pl.coderslab.visitsplanner.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -11,22 +13,24 @@ public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
+    @NotNull(message = "Należy wskazać datę")
+    @Future(message = "Data musi być z przyszłości")
     private LocalDateTime dateTime;
     @NotNull
+    @Pattern(regexp = "[A-Z][a-z]*", message = "Specjalizacja zawiera tylko litery")
     private String specialisation;
     private String comments;
 
     @OneToOne
-    @NotNull
+    @NotNull(message = "Należy wybrać pacjenta")
     private Patient patient;
 
     @OneToOne
-    @NotNull
+    @NotNull(message = "Należy wybrać lekarza")
     private Doctor doctor;
 
     @OneToOne
-    @NotNull
+    @NotNull(message = "Należy wybrać szpital")
     private Hospital hospital;
 
     public Long getId() {

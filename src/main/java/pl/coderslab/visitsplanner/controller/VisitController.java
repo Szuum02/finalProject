@@ -9,8 +9,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import pl.coderslab.visitsplanner.model.*;
 import pl.coderslab.visitsplanner.repository.*;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/visit")
@@ -22,15 +25,17 @@ public class VisitController {
     private final SpecialisationRepository specialisationRepository;
     private final DoctorRepository doctorRepository;
     private final HospitalRepository hospitalRepository;
+    private final Validator validator;
 
     public VisitController(VisitRepository visitRepository, PatientRepository patientRepository,
                            SpecialisationRepository specialisationRepository, DoctorRepository doctorRepository,
-                           HospitalRepository hospitalRepository) {
+                           HospitalRepository hospitalRepository, Validator validator) {
         this.visitRepository = visitRepository;
         this.patientRepository = patientRepository;
         this.specialisationRepository = specialisationRepository;
         this.doctorRepository = doctorRepository;
         this.hospitalRepository = hospitalRepository;
+        this.validator = validator;
         this.mapper = new ObjectMapper();
     }
 
@@ -60,7 +65,11 @@ public class VisitController {
     @PostMapping("/add/selectPatient")
     public String selectPatient(Visit visit, @RequestParam(required = false) String jsonPatient, Model model) {
         if (jsonPatient != null) {
-            visit.setPatient(createPatient(jsonPatient));
+            Patient patient = createPatient(jsonPatient);
+            if (patient == null) {
+                return "error";
+            }
+            visit.setPatient(patient);
         }
         model.addAttribute("visit", visit);
         model.addAttribute("specialisations", specialisationRepository.findAll());
@@ -70,7 +79,11 @@ public class VisitController {
     @PostMapping("/add/selectSpecialisation")
     public String selectSpecialisation(Visit visit, @RequestParam(required = false) String jsonSpecialisation, Model model) {
         if (jsonSpecialisation != null) {
-            visit.setSpecialisation(createSpecialisation(jsonSpecialisation).getName());
+            Specialization specialization = createSpecialisation(jsonSpecialisation);
+            if (specialization == null) {
+                return "error";
+            }
+            visit.setSpecialisation(specialization.getName());
         }
         model.addAttribute("visit", visit);
         model.addAttribute("doctors", doctorRepository.findAllBySpecialisationName(visit.getSpecialisation()));
@@ -80,7 +93,11 @@ public class VisitController {
     @PostMapping("/add/selectDoctor")
     public String selectDoctor(Visit visit, @RequestParam(required = false) String jsonDoctor, Model model) {
         if (jsonDoctor != null) {
-            visit.setDoctor(createDoctor(jsonDoctor, visit.getPatient(), visit.getSpecialisation()));
+            Doctor doctor = createDoctor(jsonDoctor, visit.getPatient(), visit.getSpecialisation());
+            if (doctor == null) {
+                return "error";
+            }
+            visit.setDoctor(doctor);
         }
         model.addAttribute("visit", visit);
         model.addAttribute("hospitals", doctorRepository.findAllHospitalsByDoctorId(visit.getDoctor().getId()));
@@ -90,7 +107,11 @@ public class VisitController {
     @PostMapping("/add/selectHospital")
     public String selectHospital(Visit visit, @RequestParam(required = false) String jsonHospital, Model model) {
         if (jsonHospital != null) {
-            visit.setHospital(createHospital(jsonHospital));
+            Hospital hospital = createHospital(jsonHospital);
+            if (hospital == null) {
+                return "error";
+            }
+            visit.setHospital(hospital);
         }
 
         if (!visit.getDoctor().getHospitals().contains(visit.getHospital())) {
@@ -108,6 +129,10 @@ public class VisitController {
         }
         LocalDateTime dateTime = LocalDateTime.parse(date + "T" + time);
         visit.setDateTime(dateTime);
+        Set<ConstraintViolation<Visit>> violations = validator.validate(visit);
+        if (!violations.isEmpty()) {
+            return new RedirectView("/error");
+        }
         visitRepository.save(visit);
         return new RedirectView("/visit/showAll");
     }
@@ -125,46 +150,56 @@ public class VisitController {
     }
 
     private Specialization createSpecialisation(String jsonSpecialisation) {
-        Specialization specialisation = null;
+        Specialization specialisation;
         try {
             specialisation = mapper.readValue(jsonSpecialisation, Specialization.class);
-            specialisationRepository.save(specialisation);
         } catch (JsonProcessingException e) {
-            // TODO: obsługa błędu
-            System.out.println(e.getMessage());
+            return null;
         }
+        Set<ConstraintViolation<Specialization>> violations = validator.validate(specialisation);
+        if (!violations.isEmpty()) {
+            return null;
+        }
+        specialisationRepository.save(specialisation);
         return specialisation;
     }
 
     private Doctor createDoctor(String jsonDoctor, Patient patient, String specName) {
-        Doctor doctor = null;
+        Doctor doctor;
         try {
             doctor = mapper.readValue(jsonDoctor, Doctor.class);
             doctor.setPatients(new ArrayList<>());
             doctor.getPatients().add(patient);
             doctor.setSpecializations(new ArrayList<>());
             doctor.getSpecializations().add(specialisationRepository.findByName(specName));
-            doctorRepository.save(doctor);
         } catch (JsonProcessingException e) {
-            //TODO
-            System.out.println(e.getMessage());
+            return null;
         }
+        Set<ConstraintViolation<Doctor>> violations = validator.validate(doctor);
+        if (!violations.isEmpty()) {
+            return null;
+        }
+        doctorRepository.save(doctor);
         return doctor;
     }
 
     private Hospital createHospital(String jsonHospital) {
-        Hospital hospital = null;
+        Hospital hospital;
         try {
             hospital = mapper.readValue(jsonHospital, Hospital.class);
-            if (hospitalRepository.findHospitalByNameAndCity(hospital.getName(), hospital.getCity()) == null) {
-                hospitalRepository.save(hospital);
-            } else {
-                hospital = hospitalRepository.findHospitalByNameAndCity(hospital.getName(), hospital.getCity());
-            }
         } catch (JsonProcessingException e) {
-            //TODO
-            System.out.println(e.getMessage());
+            return null;
         }
+
+        if (hospitalRepository.findHospitalByNameAndCity(hospital.getName(), hospital.getCity()) != null) {
+            return hospitalRepository.findHospitalByNameAndCity(hospital.getName(), hospital.getCity());
+        }
+
+        Set<ConstraintViolation<Hospital>> violations = validator.validate(hospital);
+        if (!violations.isEmpty()) {
+            return null;
+        }
+        hospitalRepository.save(hospital);
         return hospital;
     }
 }
