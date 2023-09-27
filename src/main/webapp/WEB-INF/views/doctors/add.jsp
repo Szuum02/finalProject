@@ -13,12 +13,19 @@
 </head>
 <body>
 <form:form id="form" method="post" modelAttribute="doctor">
+    <form:errors path="firstName" cssClass="error"/>
     Imię: <form:input id="firstName" path="firstName"/><br/>
+
+    <form:errors path="lastName" cssClass="error"/>
     Nazwisko: <form:input id="lastName" path="lastName"/><br/>
+
     <label for="specialisation" id="specialisationLabel">Specjalizacje: </label>
+    <form:errors path="specializations" cssClass="error"/>
     <form:select id="specialisation" path="specializations" items="${specialisations}" itemLabel="name" itemValue="id"/>
+
     <button id="newSpecialisation">Nowa specjalizacja</button><br/>
     <label for="hospital" id="hospitalLabel">Szpitale: </label>
+    <form:errors path="hospitals" cssClass="error"/>
     <form:select id="hospital" path="hospitals" items="${hospitals}" itemLabel="name" itemValue="id"/>
     <button id="newHospital">Nowy szpital</button><br/>
     <button id="submitButton" type="submit">Dodaj</button>

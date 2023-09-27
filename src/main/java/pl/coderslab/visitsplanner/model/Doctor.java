@@ -1,7 +1,9 @@
 package pl.coderslab.visitsplanner.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,16 +15,19 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
+    @NotBlank
+    @Pattern(regexp = "(\\p{L}*[- ])*\\p{L}+", message = "Błędne imię")
     private String firstName;
     @NotNull
+    @NotBlank
+    @Pattern(regexp = "(\\p{L}*[- ])*\\p{L}+", message = "Błędne nazwisko")
     private String lastName;
 
     @ManyToMany
-    @NotNull
+    @NotNull(message = "Należy wskazać specjalizacje")
     private List<Specialization> specializations = new ArrayList<>();
 
     @ManyToMany
-    @NotNull
     private List<Patient> patients = new ArrayList<>();
 
     @ManyToMany
